@@ -5,6 +5,12 @@ module.exports = {
     './components/**/*.{js,ts,jsx,tsx,mdx}',
     './app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
-  theme: {},
+  theme: {
+    backgroundColor: {
+      'blue-light': '#0086FF',
+      'blue-dark': '#0468C3',
+      'green': '#59C00B'
+    }
+  },
   plugins: [],
 }
