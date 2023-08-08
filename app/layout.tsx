@@ -1,8 +1,10 @@
+import { Header } from '@/components/Header'
 import './globals.css'
 import type { Metadata } from 'next'
-import { Lato } from 'next/font/google'
+import { Roboto } from 'next/font/google'
+import { SearchArea } from '@/components/SearchArea'
 
-const lato = Lato({
+const lato = Roboto({
   weight: ['400', '700'],
   subsets: ['latin'],
   display: 'swap'
@@ -21,6 +23,8 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className={lato.className}>
       <body>
+        <Header />
+        <SearchArea />
         {children}
       </body>
     </html>
