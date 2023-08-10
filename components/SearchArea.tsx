@@ -1,6 +1,10 @@
-import Link from "next/link"
+import Link from "next/link";
+import api from '@/api';
 
-export const SearchArea = () => {
+
+export const SearchArea = async () => {
+  const categories = await api.getCategories();
+
     return (
         <section className="p-5 bg-[#ddd]">
             <form className="max-w-default mx-auto bg-blue-light flex gap-4 py-5 px-3 rounded-lg">
@@ -10,9 +14,10 @@ export const SearchArea = () => {
                     id="" 
                     className="bg-[#eee] text-center border-r-gray-400 border-r-[1px] rounded-lg p-2"
                 >
-                    <option value="exemple">Todos</option>
-                    <option value="exemple">CELULARES</option>
-                    <option value="exemple">NOTEBOOKS</option>
+                    <option value="">Todos</option>
+                    {categories.length && categories.map((item) => (
+                        <option key={item.id} value={item.id}>{item.name}</option>
+                    ))}
                 </select>
 
                 <input 
