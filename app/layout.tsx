@@ -2,7 +2,6 @@ import { Header } from '@/components/Header'
 import './globals.css'
 import type { Metadata } from 'next'
 import { Roboto } from 'next/font/google'
-import { SearchArea } from '@/components/SearchArea'
 
 const lato = Roboto({
   weight: ['400', '700'],
@@ -24,7 +23,6 @@ export default function RootLayout({
     <html lang="pt-BR" className={lato.className}>
       <body>
         <Header />
-        <SearchArea />
         {children}
       </body>
     </html>
