@@ -4,6 +4,7 @@ import api from '@/api';
 
 export const SearchArea = async () => {
   const categories = await api.getCategories();
+  const states = await api.getStates();
 
     return (
         <section className="p-5 bg-[#ddd]">
@@ -29,11 +30,13 @@ export const SearchArea = async () => {
                     className="flex-1 p-2 rounded-lg" 
                 />
 
-                <select name="states" title="State list" id="" className="rounded-lg p-2">
-                    <option value="exemple">SP</option>
-                    <option value="exemple">PA</option>
-                    <option value="exemple">RJ</option>
-                </select>
+                {states.length &&
+                    <select name="states" title="State list" id="" className="rounded-lg p-2">
+                        {states.map((item) => (
+                            <option key={item._id} value={item._id}>{item.name}</option>
+                        ))}
+                    </select>
+                }
 
                 <button className="bg-green py-2 px-3 rounded-lg text-white hover:bg-green-dark transition-colors" type="submit">BUSCAR</button>
             </form>
