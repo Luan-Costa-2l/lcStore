@@ -16,7 +16,7 @@ export const SearchArea = async () => {
                 >
                     <option value="">Todos</option>
                     {categories.length && categories.map((item) => (
-                        <option key={item.id} value={item.id}>{item.name}</option>
+                        <option key={item._id} value={item._id}>{item.name}</option>
                     ))}
                 </select>
 
