@@ -16,6 +16,12 @@ module.exports = {
       maxWidth: {
         'default': '1200px'
       },
+      textColor: {
+        'blue-light': '#0086FF',
+        'blue-dark': '#0468C3',
+        'green': '#59C00B',
+        'green-dark': '#3A7808'
+      }
     },
   },
   plugins: [],
