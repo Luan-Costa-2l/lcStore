@@ -3,7 +3,7 @@ import api from '@/api';
 import { Ad } from "@/components/Ad";
 
 const Home = async () => {
-  const adData = await api.getAds();
+  const adData = await api.getAds({});
 
   return (
     <main className="bg-gray-100 min-h-[calc(100vh-60px)]">
