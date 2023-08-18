@@ -15,7 +15,7 @@ export const FieldSelect = ({ name, data, value, setValue }: SelectProps) => {
         className="border-[1px] border-gray-300 py-1 px-2 rounded outline-1 outline-gray-400"
       >
         {data.length && data.map(item => (
-          <option value={item._id}>{item.name}</option>
+          <option value={item._id} key={item._id}>{item.name}</option>
         ))}
       </select>
   )
