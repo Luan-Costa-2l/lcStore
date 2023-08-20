@@ -11,7 +11,7 @@ const Signup = async () => {
           <SignupForm />
 
           <div className="w-full flex justify-center">
-            <Image src="/login.jpg" alt="Login image" width={280} height={280} className="rounded-full" />
+            <Image src="/login.jpg" alt="Login image" width={280} height={280} className="rounded-full" priority />
           </div>
         </div>
       </section>
