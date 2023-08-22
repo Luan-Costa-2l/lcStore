@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, FormEventHandler } from "react";
+import Cookies from "js-cookie";
 import api from "@/api";
 import { State } from "@/types";
 import Field from "./Field";
@@ -22,8 +23,31 @@ export const SignupForm = () => {
     fetchStates();
   }, []);
 
+  const handleSignup: FormEventHandler = async (e) => {
+    e.preventDefault();
+
+    const body = {
+      name,
+      email,
+      state,
+      password
+    }
+    const response = await api.signup(body);
+    if ('token' in response) {
+      Cookies.set('token', response.token);
+    } else if ('name' in response.error) {
+      alert(response.error.name.msg);
+    } else if ('email' in response.error) {
+      alert(response.error.email.msg);
+    } else if ('state' in response.error) {
+      alert(response.error.state.msg);
+    } else if ('password' in response.error) {
+      alert(response.error.password.msg);
+    }
+  }
+
   return (
-    <form action="" className="w-full">
+    <form method="POST" className="w-full" onSubmit={handleSignup}>
       <Field.FieldRoot>
         <Field.Label title="Nome:" />
         <Field.Input name="name" required={true} value={name} setValue={setName} />
