@@ -15,6 +15,8 @@ export const SignupForm = () => {
 
   const [stateList, setStateList] = useState<State[]>([]);
 
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     const fetchStates = async () => {
       const res = await api.getStates();
@@ -32,7 +34,10 @@ export const SignupForm = () => {
       state,
       password
     }
+    setLoading(true);
     const response = await api.signup(body);
+    setLoading(false);
+
     if ('token' in response) {
       Cookies.set('token', response.token);
     } else if ('name' in response.error) {
