@@ -1,23 +1,13 @@
-import { HTMLInputTypeAttribute } from 'react';
-
-interface InputProps {
-  type?: HTMLInputTypeAttribute;
-  name: string;
-  required: boolean;
-  value: string;
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   setValue: (newValue: string) => void;
 }
 
-export const FieldInput = ({ type='text', name, required, value, setValue }: InputProps) => {
+export const FieldInput = ({ setValue, ...props }: InputProps) => {
   return (
     <input 
-    type={type} 
-    name={name} 
-    id={name} 
-    value={value}
-    onChange={e => setValue(e.target.value)}
-    className="flex-1 p-1 border-[1px] border-gray-300 rounded outline-1 outline-gray-400" 
-    required={required}
-  />
+      {...props}
+      onChange={e => setValue(e.target.value)}
+      className="flex-1 w-full p-1 border-[1px] border-gray-300 rounded outline-1 outline-gray-400" 
+    />
   )
 }
