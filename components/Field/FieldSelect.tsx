@@ -1,16 +1,14 @@
-interface SelectProps {
-  name: string;
+interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   data: { _id: string, name: string }[];
-  value: string;
+  name: string;
   setValue: (newValue: string) => void;
 }
 
-export const FieldSelect = ({ name, data, value, setValue }: SelectProps) => {
+export const FieldSelect = ({ data, setValue, name, ...props }: SelectProps) => {
   return (
       <select 
-        name={name} 
-        id={name} 
-        value={value}
+        {...props}
+        id={name}
         onChange={e => setValue(e.target.value)} 
         className="border-[1px] border-gray-300 py-1 px-2 rounded outline-1 outline-gray-400"
       >
