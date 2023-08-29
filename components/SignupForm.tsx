@@ -6,6 +6,8 @@ import api from "@/api";
 import { State } from "@/types";
 import Field from "./Field";
 
+type ErrorFieldOptions = '' | 'name' | 'state' | 'email' | 'password' | 'confirmPassword';
+
 export const SignupForm = () => {
   const [name, setName] = useState('');
   const [state, setState] = useState('');
@@ -13,8 +15,11 @@ export const SignupForm = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const [stateList, setStateList] = useState<State[]>([]);
+  const [errorField, setErrorField] = useState<ErrorFieldOptions>('');
+  const [errorMessage, setErrorMessage] = useState('');
 
+  const [stateList, setStateList] = useState<State[]>([]);
+  
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -27,6 +32,8 @@ export const SignupForm = () => {
 
   const handleSignup: FormEventHandler = async (e) => {
     e.preventDefault();
+    setErrorField('');
+    setErrorMessage('');
 
     const body = {
       name,
@@ -41,13 +48,20 @@ export const SignupForm = () => {
     if ('token' in response) {
       Cookies.set('token', response.token);
     } else if ('name' in response.error) {
-      alert(response.error.name.msg);
+      setErrorField('name');
+      setErrorMessage(response.error.name.msg);
     } else if ('email' in response.error) {
-      alert(response.error.email.msg);
+      setErrorField('email');
+      setErrorMessage(response.error.email.msg);
     } else if ('state' in response.error) {
-      alert(response.error.state.msg);
+      setErrorField('state');
+      setErrorMessage(response.error.state.msg);
     } else if ('password' in response.error) {
-      alert(response.error.password.msg);
+      setErrorField('password');
+      setErrorMessage(response.error.password.msg);
+    } else if (password !== confirmPassword) {
+      setErrorField('confirmPassword');
+      setErrorMessage('As senhas não batem.');
     }
   }
 
@@ -55,32 +69,42 @@ export const SignupForm = () => {
     <form method="POST" className="w-full" onSubmit={handleSignup}>
       <Field.FieldRoot>
         <Field.Label title="Nome:" />
-        <Field.Input name="name" required={true} value={name} setValue={setName} />
+        <Field.ErrorMessage message={errorField == 'name' ? errorMessage : ''} >
+          <Field.Input name="name" required={true} value={name} setValue={setName} />
+        </Field.ErrorMessage>
       </Field.FieldRoot>
 
       <Field.FieldRoot>
         <Field.Label title="Estado:" />
-        <Field.Select name="state" value={state} setValue={setState} data={stateList} />
+        <Field.ErrorMessage message={errorField == 'state' ? errorMessage : ''}>
+          <Field.Select name="state" value={state} setValue={setState} data={stateList} />
+        </Field.ErrorMessage>
       </Field.FieldRoot>
 
       <Field.FieldRoot>
         <Field.Label title="E-mail:" />
-        <Field.Input type="email" name="email" required={true} value={email} setValue={setEmail} />
+        <Field.ErrorMessage message={errorField == 'email' ? errorMessage : ''}>
+          <Field.Input type="email" name="email" required={true} value={email} setValue={setEmail} />
+        </Field.ErrorMessage>
       </Field.FieldRoot>
 
       <Field.FieldRoot>
         <Field.Label title="Senha:" />
-        <Field.Input type="password" name="password" required={true} value={password} setValue={setPassword} />
+        <Field.ErrorMessage message={errorField == 'password' ? errorMessage : ''}>
+          <Field.Input type="password" name="password" required={true} value={password} setValue={setPassword} />
+        </Field.ErrorMessage>
       </Field.FieldRoot>
 
       <Field.FieldRoot>
         <Field.Label title="Confirmar senha:" />
-        <Field.Input type="password" name="confirmPassword" required={true} value={confirmPassword} setValue={setConfirmPassword} />
+        <Field.ErrorMessage  message={errorField == 'confirmPassword' ? errorMessage : ''}>
+          <Field.Input type="password" name="confirmPassword" required={true} value={confirmPassword} setValue={setConfirmPassword} />
+        </Field.ErrorMessage>
       </Field.FieldRoot>
 
       <Field.FieldRoot>
         <Field.Label title="" />
-        <Field.Button type="submit" title="Cadastrar" />
+        <Field.Button type="submit" title={loading ? 'Cadastrando...' : 'Cadastrar'} />
       </Field.FieldRoot>
     </form>
   )
