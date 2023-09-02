@@ -1,4 +1,6 @@
-interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
+import { ComponentProps } from 'react';
+
+interface SelectProps extends ComponentProps<'select'> {
   data: { _id: string, name: string }[];
   name: string;
   setValue: (newValue: string) => void;

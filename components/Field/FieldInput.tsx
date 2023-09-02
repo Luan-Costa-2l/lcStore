@@ -1,4 +1,6 @@
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+import { ComponentProps } from 'react';
+
+interface InputProps extends ComponentProps<'input'> {
   setValue: (newValue: string) => void;
 }
 
