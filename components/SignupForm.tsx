@@ -45,24 +45,20 @@ export const SignupForm = () => {
     const response = await api.signup(body);
     setLoading(false);
 
-    if ('token' in response) {
-      Cookies.set('token', response.token);
-    } else if ('name' in response.error) {
-      setErrorField('name');
-      setErrorMessage(response.error.name.msg);
-    } else if ('email' in response.error) {
-      setErrorField('email');
-      setErrorMessage(response.error.email.msg);
-    } else if ('state' in response.error) {
-      setErrorField('state');
-      setErrorMessage(response.error.state.msg);
-    } else if ('password' in response.error) {
-      setErrorField('password');
-      setErrorMessage(response.error.password.msg);
-    } else if (password !== confirmPassword) {
-      setErrorField('confirmPassword');
-      setErrorMessage('As senhas não batem.');
+    if ('error' in response) {
+      const errorPath = Object.keys(response.error)[0];
+      setErrorField(errorPath as ErrorFieldOptions);
+      setErrorMessage(response.error[errorPath].msg);
+      return;
     }
+
+    if (password !== confirmPassword) {
+      setErrorField('confirmPassword');
+      setErrorMessage('As senhas não batem');
+      return;
+    }
+
+    Cookies.set('token', response.token);
   }
 
   return (
