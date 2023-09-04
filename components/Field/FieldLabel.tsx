@@ -1,10 +1,12 @@
-interface FieldLabelProps {
+import { ComponentProps } from "react";
+
+interface FieldLabelProps extends ComponentProps<'label'> {
   title: string;
 }
 
-export const FieldLabel = ({ title }: FieldLabelProps) => {
+export const FieldLabel = ({ title, ...props }: FieldLabelProps) => {
   return (
-    <label htmlFor="name" className="font-bold min-w-[150px] text-right">
+    <label {...props} className="font-bold min-w-[150px] text-right">
       {title}
     </label>
   )

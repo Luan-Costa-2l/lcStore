@@ -1,20 +1,25 @@
 'use client'
 
+import { useRouter } from 'next/navigation';
 import { useState, useEffect, FormEventHandler } from "react";
 import Cookies from "js-cookie";
 import { z } from "zod";
 import api from "@/api";
 import { State } from "@/types";
 import Field from "./Field";
+import Link from "next/link";
 
 type ErrorFieldOptions = '' | 'name' | 'state' | 'email' | 'password' | 'confirmPassword';
 
 export const SignupForm = () => {
+  const { push } = useRouter();
+
   const [name, setName] = useState('');
   const [state, setState] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [stayLogged, setStayLogged] = useState(false);
 
   const [errorField, setErrorField] = useState<ErrorFieldOptions>('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -87,7 +92,12 @@ export const SignupForm = () => {
       return;
     }
 
-    Cookies.set('token', response.token);
+    const DAYS_TO_EXPIRES_THE_COOKIES = 60;
+    const expires = stayLogged ? DAYS_TO_EXPIRES_THE_COOKIES : undefined;
+
+    Cookies.set('token', response.token, { expires });
+
+    push('/');
   }
 
   const verifyAlert = (fieldName: string): boolean => {
@@ -132,8 +142,18 @@ export const SignupForm = () => {
       </Field.FieldRoot>
 
       <Field.FieldRoot>
+        <Field.Label title="Manter login" htmlFor="stay"/>
+        <input type="checkbox" name="stay" id="stay" checked={stayLogged} onChange={e => setStayLogged(e.target.checked)} className="cursor-pointer" />
+      </Field.FieldRoot>
+
+      <Field.FieldRoot>
         <Field.Label title="" />
         <Field.Button type="submit" title={loading ? 'Cadastrando...' : 'Cadastrar'} />
+      </Field.FieldRoot>
+
+      <Field.FieldRoot>
+        <Field.Label title="" />
+        <span>Já tem uma conta? <Link href="/signin" className="text-base text-blue-light transition-colors hover:text-blue-dark mt-3">Entrar</Link></span>
       </Field.FieldRoot>
     </form>
   )
