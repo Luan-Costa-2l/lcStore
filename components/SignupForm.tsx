@@ -2,6 +2,7 @@
 
 import { useState, useEffect, FormEventHandler } from "react";
 import Cookies from "js-cookie";
+import { z } from "zod";
 import api from "@/api";
 import { State } from "@/types";
 import Field from "./Field";
@@ -30,10 +31,44 @@ export const SignupForm = () => {
     fetchStates();
   }, []);
 
-  const handleSignup: FormEventHandler = async (e) => {
-    e.preventDefault();
+  const SignUp = z.object({
+    name: z.string().nonempty('Este campo não pode estar vazio').min(2, 'Nome precisa ter pelo menos 2 caracters'),
+    state: z.string().nonempty('Este campo não pode estar vazio'),
+    email: z.string().nonempty('Este campo não pode estar vazio').email('Formato de E-mail inválido'),
+    password: z.string().nonempty('Este campo não pode estar vazio').min(4, 'Senha precisa ter pelo menos 4 caracteres'),
+    confirmPassword: z.string().nonempty('Este campo não pode estar vazio')
+  });
+
+  const clearErros = () => {
     setErrorField('');
     setErrorMessage('');
+  }
+
+  const handleSignup: FormEventHandler = async (e) => {
+    e.preventDefault();
+    clearErros();
+
+    const result = SignUp.safeParse({
+      name,
+      state,
+      email,
+      password,
+      confirmPassword
+    });
+
+    if (!result.success) {
+      const data: { message: string, path: string[] } = JSON.parse(result.error.message)[0];
+      const errorPath = data.path[0];
+      setErrorField(errorPath as ErrorFieldOptions);
+      setErrorMessage(data.message);
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setErrorField('confirmPassword');
+      setErrorMessage('As senhas não batem');
+      return;
+    }
 
     const body = {
       name,
@@ -52,13 +87,11 @@ export const SignupForm = () => {
       return;
     }
 
-    if (password !== confirmPassword) {
-      setErrorField('confirmPassword');
-      setErrorMessage('As senhas não batem');
-      return;
-    }
-
     Cookies.set('token', response.token);
+  }
+
+  const verifyAlert = (fieldName: string): boolean => {
+    return fieldName === errorField;
   }
 
   return (
@@ -66,35 +99,35 @@ export const SignupForm = () => {
       <Field.FieldRoot>
         <Field.Label title="Nome:" />
         <Field.ErrorMessage message={errorField == 'name' ? errorMessage : ''} >
-          <Field.Input name="name" required={true} value={name} setValue={setName} />
+          <Field.Input name="name" required={true} value={name} setValue={setName} alert={verifyAlert('name')} clearErros={clearErros} />
         </Field.ErrorMessage>
       </Field.FieldRoot>
 
       <Field.FieldRoot>
         <Field.Label title="Estado:" />
         <Field.ErrorMessage message={errorField == 'state' ? errorMessage : ''}>
-          <Field.Select name="state" value={state} setValue={setState} data={stateList} />
+          <Field.Select name="state" value={state} setValue={setState} data={stateList} alert={verifyAlert('email')} clearErros={clearErros} />
         </Field.ErrorMessage>
       </Field.FieldRoot>
 
       <Field.FieldRoot>
         <Field.Label title="E-mail:" />
         <Field.ErrorMessage message={errorField == 'email' ? errorMessage : ''}>
-          <Field.Input type="email" name="email" required={true} value={email} setValue={setEmail} />
+          <Field.Input type="email" name="email" required={true} value={email} setValue={setEmail} alert={verifyAlert('email')} clearErros={clearErros} />
         </Field.ErrorMessage>
       </Field.FieldRoot>
 
       <Field.FieldRoot>
         <Field.Label title="Senha:" />
         <Field.ErrorMessage message={errorField == 'password' ? errorMessage : ''}>
-          <Field.Input type="password" name="password" required={true} value={password} setValue={setPassword} />
+          <Field.Input type="password" name="password" required={true} value={password} setValue={setPassword} alert={verifyAlert('password')} clearErros={clearErros} />
         </Field.ErrorMessage>
       </Field.FieldRoot>
 
       <Field.FieldRoot>
         <Field.Label title="Confirmar senha:" />
         <Field.ErrorMessage  message={errorField == 'confirmPassword' ? errorMessage : ''}>
-          <Field.Input type="password" name="confirmPassword" required={true} value={confirmPassword} setValue={setConfirmPassword} />
+          <Field.Input type="password" name="confirmPassword" required={true} value={confirmPassword} setValue={setConfirmPassword} alert={verifyAlert('confirmPassword')} clearErros={clearErros} />
         </Field.ErrorMessage>
       </Field.FieldRoot>
 
