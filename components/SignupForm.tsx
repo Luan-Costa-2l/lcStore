@@ -2,12 +2,12 @@
 
 import { useRouter } from 'next/navigation';
 import { useState, useEffect, FormEventHandler } from "react";
-import Cookies from "js-cookie";
 import { z } from "zod";
 import api from "@/api";
 import { State } from "@/types";
 import Field from "./Field";
 import Link from "next/link";
+import { doLogin } from '@/helpers/AuthHandler';
 
 type ErrorFieldOptions = '' | 'name' | 'state' | 'email' | 'password' | 'confirmPassword';
 
@@ -92,10 +92,7 @@ export const SignupForm = () => {
       return;
     }
 
-    const DAYS_TO_EXPIRES_THE_COOKIES = 60;
-    const expires = stayLogged ? DAYS_TO_EXPIRES_THE_COOKIES : undefined;
-
-    Cookies.set('token', response.token, { expires });
+    doLogin(stayLogged, response.token);
 
     push('/');
   }
