@@ -82,5 +82,25 @@ export default {
             console.error('Erro durante o registro: ', error);
             throw new Error('Ocorreu um erro durante o registro, tente novamente mais tarde.');
         }
+    },
+    signin: async ({ email, password }: {email: string, password: string}): Promise<ErrorResponseType | { token: string, email: string }> => {
+        try {
+            const response = await fetch(BASE_URL + '/user/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData || 'Erro desconhecido');
+            }
+
+            const responseData: ErrorResponseType | { token: string, email: string } = await response.json();
+            return responseData;
+        } catch (err) {
+            console.error('Erro durante o login: ', err);
+            throw new Error('Ocorreu um erro durante o login');
+        }
     }
 }
