@@ -1,4 +1,4 @@
-import { AdType, Category, State } from "@/types";
+import { AdInfo, AdType, Category, State } from "@/types";
 
 const BASE_URL = process.env.NODE_ENV == 'production' ? 'https://lcstore-api.onrender.com' : 'http://localhost:8080'; // open url
 
@@ -63,6 +63,24 @@ export default {
         const response: { ads: AdType[], total: number } = await fetch(BASE_URL + '/ad/list' + query, { next: { revalidate: 60 * 60 * 2 } })
             .then(res => res.json());
         return response;
+    },
+    getAdInfo: async (id: string) => {
+        try {
+            const response = await fetch(BASE_URL + `/ad/${id}`, { next: { revalidate: 60 * 60 * 2 } });
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData || 'Error desconhecido');
+            }
+            const responseData: { error: string } | AdInfo = await response.json();
+            if ('error' in responseData) {
+                console.error('Erro durante o registro: ', responseData.error);
+                throw new Error('Ocorreu um erro durante a requisição, tente novamente mais tarde.');  
+            }
+            return responseData;
+        } catch (err) {
+            console.error('Erro durante o registro: ', err);
+            throw new Error('Ocorreu um erro durante a requisição, tente novamente mais tarde.');  
+        }
     },
     signup: async ({ name, email, state, password }: SignupParamsType) => {
         try {
