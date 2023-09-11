@@ -17,3 +17,17 @@ export interface AdType {
     priceNegotiable: boolean;
     image: string;
 }
+
+export interface AdInfo extends Omit<AdType, 'image'> {
+    description: string;
+    dateCreated: Date;
+    views: number;
+    stateName: string;
+    category: string;
+    images: string[];
+    userInfo: {
+        name: string;
+        email: string;
+    };
+    others: AdType[];
+}
