@@ -64,9 +64,10 @@ export default {
             .then(res => res.json());
         return response;
     },
-    getAdInfo: async (id: string) => {
+    getAdInfo: async (id: string, other: boolean = false) => {
         try {
-            const response = await fetch(BASE_URL + `/ad/${id}`, { next: { revalidate: 60 * 60 * 2 } });
+            const query = other ? `?other=${other}` : '';
+            const response = await fetch(BASE_URL + `/ad/${id}` + query, { next: { revalidate: 60 * 60 * 2 } });
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData || 'Error desconhecido');
