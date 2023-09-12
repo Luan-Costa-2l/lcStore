@@ -23,7 +23,7 @@ export interface AdInfo extends Omit<AdType, 'image'> {
     dateCreated: Date;
     views: number;
     stateName: string;
-    category: string;
+    category: Category;
     images: string[];
     userInfo: {
         name: string;
