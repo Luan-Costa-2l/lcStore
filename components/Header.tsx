@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { NavBar } from './Navbar';
 
 export const Header = () => {
     return (
@@ -7,19 +8,7 @@ export const Header = () => {
                 <div className='uppercase text-2xl font-bold'>
                     <Link href={`/`}>lcstore</Link>
                 </div>
-                <nav>
-                    <ul className='flex text-sm  uppercase gap-2'>
-                        <li>
-                            <Link href={`/signin`} className='py-2 px-3 hover:text-gray-600 transition-colors'>Entrar</Link>
-                        </li>
-                        <li>
-                            <Link href={`/signup`} className='py-2 px-3 hover:text-gray-600 transition-colors'>Cadastrar</Link>
-                        </li>
-                        <li>
-                            <Link href={`/addad`} className='bg-blue-light py-2 px-3 rounded-lg text-white hover:bg-blue-dark transition-colors'>Postar um anúncio</Link>
-                        </li>
-                    </ul>
-                </nav>
+                <NavBar />
             </div>
         </header>
     )
