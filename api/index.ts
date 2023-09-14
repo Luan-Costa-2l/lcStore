@@ -2,8 +2,21 @@ import { AdInfo, AdType, Category, State } from "@/types";
 
 const BASE_URL = process.env.NODE_ENV == 'production' ? 'https://lcstore-api.onrender.com' : 'http://localhost:8080'; // open url
 
-const formatQueryFilters = (sort?: 'asc' | 'desc', offset?: number, limit?: string, q?: string, cat?: string, state?: string) => {
+interface FormatQueryFiltersParams {
+    sort?: 'asc' | 'desc';
+    offset?: number;
+    limit?: string;
+    q?: string;
+    cat?: string;
+    state?: string;
+    token?: string;
+}
+
+const formatQueryFilters = ({ sort, offset, limit, q, cat, state, token }: FormatQueryFiltersParams) => {
     let filters: string[] = [];
+    if (token) {
+        filters.push(`token=${token}`);
+    }
     if (sort) {
         filters.push(`sort=${sort}`);
     }
@@ -59,7 +72,7 @@ export default {
         return response.states;
     },
     getAds: async ({ sort, offset, limit, q, cat, state }: GetAdsParams) => {
-        const query = formatQueryFilters(sort, offset, limit, q, cat, state);
+        const query = formatQueryFilters({ sort, offset, limit, q, cat, state });
         const response: { ads: AdType[], total: number } = await fetch(BASE_URL + '/ad/list' + query, { next: { revalidate: 60 * 60 * 2 } })
             .then(res => res.json());
         return response;
