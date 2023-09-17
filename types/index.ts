@@ -31,3 +31,11 @@ export interface AdInfo extends Omit<AdType, 'image'> {
     };
     others: AdType[];
 }
+
+export interface UserType {
+    name: string;
+    email: string;
+    state: State;
+    adsTotal: number;
+    ads: AdType[];
+}

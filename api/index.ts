@@ -1,4 +1,4 @@
-import { AdInfo, AdType, Category, State } from "@/types";
+import { AdInfo, AdType, Category, State, UserType } from "@/types";
 
 const BASE_URL = process.env.NODE_ENV == 'production' ? 'https://lcstore-api.onrender.com' : 'http://localhost:8080'; // open url
 
@@ -61,6 +61,8 @@ export interface SignupParamsType {
     state: string;
     password: string;
 }
+
+type GetUserInfoReturn = { userInfo: UserType } | { error: string };
 
 export default {
     getCategories: async () => {
@@ -133,6 +135,23 @@ export default {
         } catch (err) {
             console.error('Erro durante o login: ', err);
             throw new Error('Ocorreu um erro durante o login');
+        }
+    },
+    getUserInfo: async (token: string, sort?: 'asc' | 'desc', offset?: number, limit?: string, q?: string, cat?: string): Promise<GetUserInfoReturn> => {
+        try {
+            const query = formatQueryFilters({ sort, offset, limit, q, cat, token });
+            const response = await fetch(BASE_URL + '/user/me' + query);
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData || 'Erro desconhecido');
+            }
+
+            const responseData: GetUserInfoReturn = await response.json();
+            return responseData;
+        } catch (err) {
+            console.error('Erro ao requerir informações: ', err);
+            throw new Error('Erro ao requerir informações do usuário');
         }
     }
 }
