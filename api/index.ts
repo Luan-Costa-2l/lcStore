@@ -1,4 +1,5 @@
 import { AdInfo, AdType, Category, State, UserType } from "@/types";
+import Cookies from "js-cookie";
 
 const BASE_URL = process.env.NODE_ENV == 'production' ? 'https://lcstore-api.onrender.com' : 'http://localhost:8080'; // open url
 
@@ -63,6 +64,12 @@ export interface SignupParamsType {
 }
 
 type GetUserInfoReturn = { userInfo: UserType } | { error: string };
+
+interface UpdateUserInfoParams extends SignupParamsType {
+    newPassword?: string;
+}
+
+type UpdateUserInfoReturn = { updated: boolean } | ErrorResponseType;
 
 export default {
     getCategories: async () => {
@@ -152,6 +159,27 @@ export default {
         } catch (err) {
             console.error('Erro ao requerir informações: ', err);
             throw new Error('Erro ao requerir informações do usuário');
+        }
+    },
+    updateUserInfo: async ({ name, email, state, password, newPassword }: UpdateUserInfoParams): Promise<UpdateUserInfoReturn> => {
+        try {
+            const token = Cookies.get('token') || '';
+            const response = await fetch(BASE_URL + '/user/me', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, state, password, newPassword, token })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData || 'Erro desconhecido');
+            }
+
+            const responseData: UpdateUserInfoReturn = await response.json();
+            return responseData;
+        } catch (err) {
+            console.error('Erro ao atualizar informações: ', err);
+            throw new Error('Ocorreu um erro ao atualizar informações de usuário');
         }
     }
 }
