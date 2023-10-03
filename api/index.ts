@@ -152,5 +152,25 @@ export default {
             console.error('Erro ao atualizar informações: ', err);
             throw new Error('Ocorreu um erro ao atualizar informações de usuário');
         }
+    },
+    updateAdInfo: async ({ token, id, category, description, img, price, priceNegotiable, title}: UpdateAdInfoParams) => {
+        try {
+            const response = await fetch(BASE_URL + `/ad/${id}`, {
+                method: 'POST',
+                headers: {'Content-Type': 'multipart/form-data'},
+                body: JSON.stringify({ token, category, description, img, price, priceNegotiable, title })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData || 'Erro desconhecido');
+            }
+
+            const responseData = await response.json();
+            return responseData as { updated: boolean } | ErrorResponseType;
+        } catch(err) {
+            console.error('Erro ao atualizar informações do anúncio: ', err);
+            throw new Error('Ocorreu um erro ao atualizar informações do anúncio');
+        }
     }
 }
