@@ -1,17 +1,17 @@
-import { AdInfo, AdType, Category, State, UserType } from "@/types";
+import { AdInfo, AdType, Category, State } from "@/types";
+import { 
+    ErrorResponseType, 
+    FormatQueryFiltersParams, 
+    GetAdsParams, 
+    GetUserInfoReturn, 
+    SignupParamsType, 
+    UpdateAdInfoParams, 
+    UpdateUserInfoParams, 
+    UpdateUserInfoReturn 
+} from "@/types/apiTypes";
 import Cookies from "js-cookie";
 
 const BASE_URL = process.env.NODE_ENV == 'production' ? 'https://lcstore-api.onrender.com' : 'http://localhost:8080'; // open url
-
-interface FormatQueryFiltersParams {
-    sort?: 'asc' | 'desc';
-    offset?: number;
-    limit?: string;
-    q?: string;
-    cat?: string;
-    state?: string;
-    token?: string;
-}
 
 const formatQueryFilters = ({ sort, offset, limit, q, cat, state, token }: FormatQueryFiltersParams) => {
     let filters: string[] = [];
@@ -41,35 +41,6 @@ const formatQueryFilters = ({ sort, offset, limit, q, cat, state, token }: Forma
     }
     return '?' + filters.join('&');
 }
-
-interface GetAdsParams {
-    sort?: 'asc' | 'desc';
-    offset?: number;
-    limit?: string;
-    q?: string;
-    cat?: string;
-    state?: string
-}
-
-
-interface ErrorResponseType {
-    error: { [tag: string]: { msg: string } }
-}
-
-export interface SignupParamsType {
-    name: string;
-    email: string;
-    state: string;
-    password: string;
-}
-
-type GetUserInfoReturn = { userInfo: UserType } | { error: string };
-
-interface UpdateUserInfoParams extends SignupParamsType {
-    newPassword?: string;
-}
-
-type UpdateUserInfoReturn = { updated: boolean } | ErrorResponseType;
 
 export default {
     getCategories: async () => {
