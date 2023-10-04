@@ -2,15 +2,18 @@
 
 import { useState, useEffect, FormEventHandler } from "react";
 import { z } from "zod";
-import Cookies from "js-cookie";
-import { redirect } from "next/navigation";
 import api from "@/api";
-import { AdType, State } from "@/types";
+import { State, UserType } from "@/types";
 import Field from "./Field";
+
+interface ProfileFormProps {
+  userInfo: UserType;
+  states: State[];
+}
 
 type ErrorFieldOptions = '' | 'name' | 'state' | 'email' | 'password' | 'newPassword' | 'confirmNewPassword';
 
-export const ProfileForm = () => {
+export const ProfileForm = ({ userInfo, states }: ProfileFormProps) => {
   const [name, setName] = useState('');
   const [state, setState] = useState('');
   const [email, setEmail] = useState('');
@@ -20,31 +23,13 @@ export const ProfileForm = () => {
 
   const [errorField, setErrorField] = useState<ErrorFieldOptions>('');
   const [errorMessage, setErrorMessage] = useState('');
-
-  const [stateList, setStateList] = useState<State[]>([]);
-  const [ads, setAds] = useState<AdType[]>([]);
   
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const token = Cookies.get('token');
-    if (!token) {
-      redirect('/signin');
-    }
-    const fetchUserInfo = async () => {
-      const [userData, states] = await Promise.all([api.getUserInfo(token), api.getStates()]);
-      if ('error' in userData) {
-        alert('Ocorreu um erro, tente novamente mais tarde.');
-        return;
-      }
-      const { name, email, state, ads, adsTotal } = userData.userInfo;
-      setName(name);
-      setEmail(email);
-      setState(state._id);
-      setAds(ads);
-      setStateList(states)
-    }
-    fetchUserInfo();
+    setName(userInfo.name);
+    setEmail(userInfo.email);
+    setState(userInfo.state._id);
   }, []);
 
   const UserInfo = z.object({
@@ -131,7 +116,7 @@ export const ProfileForm = () => {
       <Field.FieldRoot>
         <Field.Label title="Estado:" />
         <Field.ErrorMessage message={errorField == 'state' ? errorMessage : ''}>
-          <Field.Select name="state" value={state} setValue={setState} data={stateList} alert={verifyAlert('email')} clearErros={clearErros} />
+          <Field.Select name="state" value={state} setValue={setState} data={states} alert={verifyAlert('email')} clearErros={clearErros} />
         </Field.ErrorMessage>
       </Field.FieldRoot>
 
