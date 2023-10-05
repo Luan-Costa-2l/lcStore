@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, FormEventHandler } from "react";
+import { useState, FormEventHandler, useEffect } from "react";
 import { z } from "zod";
 import api from "@/api";
 import { State, UserType } from "@/types";
@@ -30,7 +30,7 @@ export const ProfileForm = ({ userInfo, states }: ProfileFormProps) => {
     setName(userInfo.name);
     setEmail(userInfo.email);
     setState(userInfo.state._id);
-  }, []);
+  }, [userInfo])
 
   const UserInfo = z.object({
     name: z.string().nonempty('Este campo não pode estar vazio').min(2, 'Nome precisa ter pelo menos 2 caracters'),
