@@ -12,6 +12,7 @@ import { State, UserType } from "@/types";
 const Profile = () => {
   const [userInfo, setUserInfo] = useState<UserType>({ ads: [], adsTotal: 0, email: '', name: '', state: { _id: '', name: '' } });
   const [states, setStates] = useState<State[]>([]);
+  const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
     const token = Cookies.get('token');
@@ -43,8 +44,8 @@ const Profile = () => {
           </div>
         </div>
       </section>
-      
-      <ProfileAdList adList={userInfo.ads} />
+
+      <ProfileAdList adList={userInfo.ads} openModal={setOpenModal} />
     </main>
   )
 }
