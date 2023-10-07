@@ -7,7 +7,7 @@ import { fixPrice } from "@/helpers/Formaters";
 
 interface ProfileAdListProps {
   adList: AdType[];
-  openModal: (params: boolean) => void;
+  openModal: (id: string) => void;
 }
 
 export const ProfileAdList = ({ adList, openModal }: ProfileAdListProps) => {
@@ -43,7 +43,7 @@ export const ProfileAdList = ({ adList, openModal }: ProfileAdListProps) => {
                 <span className="block w-0 ml-[3px] border-[16px] border-blue-light border-x-transparent border-t-0"></span>
                 <ul className="bg-blue-light text-white py-1 absolute rounded uppercase">
                   <li>
-                    <button className="mb-1 px-3 py-1 uppercase hover:bg-blue-dark" onClick={() => openModal(true)}>Editar</button>
+                    <button className="mb-1 px-3 py-1 uppercase hover:bg-blue-dark" onClick={() => openModal(item.id)}>Editar</button>
                   </li>
                   <li>
                     <Link href={`/ads/${item.id}`} className="block px-3 py-1 hover:bg-blue-dark">Ver</Link>
