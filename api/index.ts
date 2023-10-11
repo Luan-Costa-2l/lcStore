@@ -153,12 +153,32 @@ export default {
             throw new Error('Ocorreu um erro ao atualizar informações de usuário');
         }
     },
-    updateAdInfo: async ({ token, id, category, description, img, price, priceNegotiable, title}: UpdateAdInfoParams) => {
+    updateAdInfo: async ({ id, category, description, img, price, priceNegotiable, title }: UpdateAdInfoParams) => {
         try {
+            const token = Cookies.get('token') || '';
+            const formData = new FormData();
+            formData.append('token', token)
+            if (title) {
+                formData.append('title', title);
+            }
+            if (category) {
+                formData.append('category', category);
+            }
+            if (price) {
+                formData.append('price', price.toString());
+            }
+            if (priceNegotiable) {
+                formData.append('priceNegotiable', priceNegotiable.toString());
+            }
+            if (description) {
+                formData.append('description', description);
+            }
+            if (img) {
+                img.forEach(file => formData.append('img', file));
+            }
             const response = await fetch(BASE_URL + `/ad/${id}`, {
                 method: 'POST',
-                headers: {'Content-Type': 'multipart/form-data'},
-                body: JSON.stringify({ token, category, description, img, price, priceNegotiable, title })
+                body: formData
             });
 
             if (!response.ok) {
