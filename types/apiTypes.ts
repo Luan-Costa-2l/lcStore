@@ -39,9 +39,12 @@ export interface UpdateUserInfoParams extends SignupParamsType {
 
 export type UpdateUserInfoReturn = { updated: boolean } | ErrorResponseType;
 
-export interface UpdateAdInfoParams extends Omit<AdType, 'image'> {
-  description: string;
-  category: string;
-  img: File[];
-  token: string;
+export interface UpdateAdInfoParams {
+  id?: string;
+  title?: string;
+  price?: number;
+  priceNegotiable?: boolean;
+  description?: string;
+  category?: string;
+  img?: File[];
 }

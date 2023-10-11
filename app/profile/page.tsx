@@ -8,10 +8,13 @@ import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { redirect } from "next/navigation";
 import { State, UserType } from "@/types";
+import { ProfileAdModal } from "@/components/ProfileAdModal";
 
 const Profile = () => {
   const [userInfo, setUserInfo] = useState<UserType>({ ads: [], adsTotal: 0, email: '', name: '', state: { _id: '', name: '' } });
   const [states, setStates] = useState<State[]>([]);
+  const [openModal, setOpenModal] = useState(false);
+  const [adId, setAdId] = useState('');
 
   useEffect(() => {
     const token = Cookies.get('token');
@@ -30,6 +33,11 @@ const Profile = () => {
     fetchUserInfo();
   }, []);
 
+  const handleOpenModal = (id: string) => {
+    setAdId(id);
+    setOpenModal(true);
+  }
+
   return (
     <main className="bg-gray-100 min-h-[calc(100vh-120px)] p-5">
       <section className="max-w-default mx-auto">
@@ -43,8 +51,12 @@ const Profile = () => {
           </div>
         </div>
       </section>
-      
-      <ProfileAdList adList={userInfo.ads} />
+
+      <ProfileAdList adList={userInfo.ads} openModal={handleOpenModal} />
+
+      {openModal &&
+        <ProfileAdModal openModal={setOpenModal} id={adId} />
+      }
     </main>
   )
 }
