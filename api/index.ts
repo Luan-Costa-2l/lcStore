@@ -1,5 +1,6 @@
 import { AdInfo, AdType, Category, State } from "@/types";
 import { 
+    CreateNewAdParams,
     ErrorResponseType, 
     FormatQueryFiltersParams, 
     GetAdsParams, 
@@ -190,6 +191,35 @@ export default {
             return responseData as { updated: boolean } | ErrorResponseType;
         } catch(err) {
             console.error('Erro ao atualizar informações do anúncio: ', err);
+            throw new Error('Ocorreu um erro ao atualizar informações do anúncio');
+        }
+    },
+    createNewAd: async (data: CreateNewAdParams) => {
+        const token = Cookies.get('token') || '';
+        const formData = new FormData();
+        formData.append('token', token);
+        formData.append('title', data.title);
+        formData.append('category', data.category);
+        formData.append('price', data.price.toString());
+        formData.append('priceNegotiable', data.priceNegotiable.toString());
+        formData.append('description', data.description);
+        data.img.forEach(file => formData.append('img', file));
+        
+        try {
+            const response = await fetch(BASE_URL + '/ad/add', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData || 'Erro desconhecido');
+            }
+
+            const responseData = await response.json();
+            return responseData as { id: string } | ErrorResponseType;
+        } catch(err) {
+            console.error('Erro ao criar um novo anúncio: ', err);
             throw new Error('Ocorreu um erro ao atualizar informações do anúncio');
         }
     }

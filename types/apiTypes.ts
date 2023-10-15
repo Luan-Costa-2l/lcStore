@@ -48,3 +48,12 @@ export interface UpdateAdInfoParams {
   category?: string;
   img?: File[];
 }
+
+export interface CreateNewAdParams {
+  title: string;
+  category: string;
+  price: number;
+  priceNegotiable: boolean;
+  description: string;
+  img: File[];
+}
