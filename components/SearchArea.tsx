@@ -8,7 +8,7 @@ export const SearchArea = async () => {
 
     return (
         <section className="p-5 bg-[#ddd]">
-            <form className="max-w-default mx-auto bg-blue-light flex gap-4 py-5 px-3 rounded-lg">
+            <form className="max-w-default mx-auto bg-blue-light flex gap-4 py-5 px-3 rounded-lg" action="/ads">
                 <select 
                     name="categories" 
                     title="Categories list" 
