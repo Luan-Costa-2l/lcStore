@@ -56,7 +56,7 @@ export const ProfileAdList = ({ adList, openModal }: ProfileAdListProps) => {
             {/* adinfo */}
             <img src={item.image} alt={item.title} className="rounded-t-lg border-[1px] border-gray-300" />
             <div>
-              <p className="py-1">{item.title}</p>
+              <p className="py-1 truncate">{item.title}</p>
               <div className="font-bold text-xl">{fixPrice(item.price)}</div>
             </div>
           </div>
