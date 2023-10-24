@@ -116,7 +116,7 @@ export default {
             throw new Error('Ocorreu um erro durante o login');
         }
     },
-    getUserInfo: async (token: string, sort?: 'asc' | 'desc', offset?: number, limit?: string, q?: string, cat?: string): Promise<GetUserInfoReturn> => {
+    getUserInfo: async (token: string, sort?: 'asc' | 'desc', offset?: number, limit?: number, q?: string, cat?: string): Promise<GetUserInfoReturn> => {
         try {
             const query = formatQueryFilters({ sort, offset, limit, q, cat, token });
             const response = await fetch(BASE_URL + '/user/me' + query);

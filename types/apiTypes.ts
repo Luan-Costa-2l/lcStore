@@ -3,7 +3,7 @@ import { AdType, UserType } from ".";
 export interface FormatQueryFiltersParams {
   sort?: 'asc' | 'desc';
   offset?: number;
-  limit?: string;
+  limit?: number;
   q?: string;
   cat?: string;
   state?: string;
@@ -13,7 +13,7 @@ export interface FormatQueryFiltersParams {
 export interface GetAdsParams {
   sort?: 'asc' | 'desc';
   offset?: number;
-  limit?: string;
+  limit?: number;
   q?: string;
   cat?: string;
   state?: string
