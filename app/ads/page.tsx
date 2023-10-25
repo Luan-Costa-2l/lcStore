@@ -7,6 +7,8 @@ import { GetAdsParams } from '@/types/apiTypes';
 import Link from 'next/link';
 import { fixPrice } from '@/helpers/Formaters';
 
+let timer: NodeJS.Timeout;
+
 const Ads = () => {
   const searchRef = useRef<HTMLInputElement>(null);
   const [search, setSearch] = useState('');
@@ -50,9 +52,21 @@ const Ads = () => {
   }
 
   const handleSearch = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.code.toLocaleLowerCase() === 'enter' && searchRef.current) {
-      setSearch(searchRef.current.value);
+    clearTimeout(timer);
+    const current = searchRef.current;
+    if (!current) {
+      console.error("Nenhum campo input selecionado.");
+      return;
     }
+    
+    if (e.code.toLocaleLowerCase() === 'enter') {
+      setSearch(current.value);
+      return;
+    }
+
+    timer = setTimeout(() => {
+      setSearch(current.value);
+    }, 1000);
   }
 
   return (
@@ -82,9 +96,16 @@ const Ads = () => {
 
           <p className="font-semibold">Categoria:</p>
           <ul>
-            <li className="py-[2px] cursor-pointer hover:bg-green hover:text-white rounded transition-colors" onClick={() => setCategory(null)}>Todos</li>
+            <li 
+              onClick={() => setCategory(null)}
+              className={`py-[2px] cursor-pointer hover:bg-green hover:text-white rounded transition-colors ${!category && 'bg-green text-white'}`} 
+            >Todos</li>
             {categoryLIst && categoryLIst.map((item) => (
-              <li key={item._id} className="py-[2px] cursor-pointer hover:bg-green hover:text-white rounded transition-colors" onClick={e => setCategory(item)}>{item.name}</li>
+              <li 
+                key={item._id} 
+                onClick={e => setCategory(item)}
+                className={`py-[2px] cursor-pointer hover:bg-green hover:text-white rounded transition-colors ${item.slug === category?.slug && 'bg-green text-white'}`} 
+              >{item.name}</li>
             ))}
           </ul>
         </div>
