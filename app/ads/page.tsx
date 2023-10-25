@@ -7,6 +7,8 @@ import { GetAdsParams } from '@/types/apiTypes';
 import Link from 'next/link';
 import { fixPrice } from '@/helpers/Formaters';
 
+let timer: NodeJS.Timeout;
+
 const Ads = () => {
   const searchRef = useRef<HTMLInputElement>(null);
   const [search, setSearch] = useState('');
@@ -50,9 +52,21 @@ const Ads = () => {
   }
 
   const handleSearch = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.code.toLocaleLowerCase() === 'enter' && searchRef.current) {
-      setSearch(searchRef.current.value);
+    clearTimeout(timer);
+    const current = searchRef.current;
+    if (!current) {
+      console.error("Nenhum campo input selecionado.");
+      return;
     }
+    
+    if (e.code.toLocaleLowerCase() === 'enter') {
+      setSearch(current.value);
+      return;
+    }
+
+    timer = setTimeout(() => {
+      setSearch(current.value);
+    }, 1000);
   }
 
   return (
