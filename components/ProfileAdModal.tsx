@@ -32,12 +32,19 @@ export const ProfileAdModal = ({ openModal, id }: ProfileModalProps) => {
   const [errorMessage, setErrorMessage] = useState('');
 
   const [loading, setLoading] = useState(false);
+  
+  let controller: AbortController;
 
   useEffect(() => {
+    controller = new AbortController();
+    const signal = controller.signal;
     const fethData = async () => {
-      const [adInfo, categories] = await Promise.all([api.getAdInfo(id), api.getCategories()]);
-      setFullAdInfo(adInfo);
+      const [adInfo, categories] = await Promise.all([api.getAdInfo(id, false, signal), api.getCategories(signal)]);
       setCategoryList(categories);
+      if (!adInfo) {
+        return;
+      }
+      setFullAdInfo(adInfo);
       setTitle(adInfo.title);
       setCategory(adInfo.category._id);
       setPrice(adInfo.price.toString());
@@ -45,6 +52,10 @@ export const ProfileAdModal = ({ openModal, id }: ProfileModalProps) => {
       setDescription(adInfo.description);
     }
     fethData();
+
+    return () => {
+      controller.abort();
+    }
   }, []);
 
   const AdInfo = z.object({

@@ -26,12 +26,19 @@ export const AddAdForm = () => {
 
   const [loading, setLoading] = useState(false);
 
+  let controller: AbortController;
+
   useEffect(() => {
+    controller = new AbortController();
+    const signal = controller.signal;
     const fetchCategories = async () => {
-      const response = await api.getCategories();
-      setCategoryList(response);
+      const response = await api.getCategories(signal);
+      setCategoryList(response ? response : []);
     }
     fetchCategories();
+    return () => {
+      controller.abort();
+    }
   }, []);
 
   const UserInfo = z.object({

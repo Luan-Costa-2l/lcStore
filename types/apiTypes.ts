@@ -16,7 +16,8 @@ export interface GetAdsParams {
   limit?: number;
   q?: string;
   cat?: string;
-  state?: string
+  state?: string;
+  signal?: AbortSignal;
 }
 
 
@@ -29,6 +30,17 @@ export interface SignupParamsType {
   email: string;
   state: string;
   password: string;
+  signal?: AbortSignal;
+}
+
+export type GetUserInfoParams = {
+  token: string; 
+  sort?: 'asc' | 'desc'; 
+  offset?: number; 
+  limit?: number; 
+  q?: string; 
+  cat?: string; 
+  signal?: AbortSignal;
 }
 
 export type GetUserInfoReturn = { userInfo: UserType } | { error: string };

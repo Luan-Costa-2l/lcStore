@@ -4,6 +4,7 @@ import {
     ErrorResponseType, 
     FormatQueryFiltersParams, 
     GetAdsParams, 
+    GetUserInfoParams, 
     GetUserInfoReturn, 
     SignupParamsType, 
     UpdateAdInfoParams, 
@@ -44,28 +45,79 @@ const formatQueryFilters = ({ sort, offset, limit, q, cat, state, token }: Forma
 }
 
 export default {
-    getCategories: async () => {
-        const response: {categories: Category[]} = await fetch(BASE_URL + '/categories').then(res => res.json());
-        return response.categories;
+    getCategories: async (signal?: AbortSignal) => {
+        try {
+            const response = await fetch(BASE_URL + '/categories', {signal});
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData || 'Erro desconhecido');
+            }
+
+            const responseData: {categories: Category[]} = await response.json();
+            return responseData.categories;
+        } catch (err) {
+            if (signal && signal.aborted) {
+                return [];
+            }
+            console.error('Erro ao requerir informações: ', err);
+            throw new Error('Erro ao requerir as categorias');
+        }
     },
-    getStates: async () => {
-        const response: { states: State[] } = await fetch(BASE_URL + '/states').then(res => res.json());
-        return response.states;
+    getStates: async (signal?: AbortSignal) => {
+        try {
+            const response = await fetch(BASE_URL + '/states', { signal });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData || 'Erro desconhecido');
+            }
+
+            const responseData: { states: State[] } = await response.json();
+            return responseData.states;
+        } catch (err) {
+            if (signal && signal.aborted) {
+                return [];
+            }
+            console.error('Erro ao requerir informações: ', err);
+            throw new Error('Erro ao requerir os estados');
+        }
     },
-    getAds: async ({ sort, offset, limit, q, cat, state }: GetAdsParams) => {
-        const query = formatQueryFilters({ sort, offset, limit, q, cat, state });
-        const response: { ads: AdType[], total: number } = await fetch(BASE_URL + '/ad/list' + query, { next: { revalidate: 60 * 60 * 2 } })
-            .then(res => res.json());
-        return response;
+    getAds: async ({ sort, offset, limit, q, cat, state, signal }: GetAdsParams) => {
+        try {
+            const query = formatQueryFilters({ sort, offset, limit, q, cat, state });
+            const response = await fetch(BASE_URL + '/ad/list' + query, { 
+                next: { revalidate: 60 * 60 * 2 },
+                signal
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData || 'Erro desconhecido');
+            }
+
+            const responseData: { ads: AdType[], total: number } = await response.json();
+            return responseData;
+        } catch (err) {
+            if (signal && signal.aborted) {
+                return { ads: [], total: 0 };
+            }
+            console.error('Erro ao requerir informações: ', err);
+            throw new Error('Erro ao requerir anúncios');
+        }
     },
-    getAdInfo: async (id: string, other: boolean = false) => {
+    getAdInfo: async (id: string, other: boolean = false, signal?: AbortSignal) => {
         try {
             const query = other ? `?other=${other}` : '';
-            const response = await fetch(BASE_URL + `/ad/${id}` + query, { next: { revalidate: 60 * 60 * 2 } });
+            const response = await fetch(BASE_URL + `/ad/${id}` + query, {
+                next: { revalidate: 60 * 60 * 2 },
+                signal
+            });
+
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData || 'Error desconhecido');
             }
+
             const responseData: { error: string } | AdInfo = await response.json();
             if ('error' in responseData) {
                 console.error('Erro durante o registro: ', responseData.error);
@@ -73,6 +125,9 @@ export default {
             }
             return responseData;
         } catch (err) {
+            if (signal && signal.aborted) {
+                return null;
+            }
             console.error('Erro durante o registro: ', err);
             throw new Error('Ocorreu um erro durante a requisição, tente novamente mais tarde.');  
         }
@@ -116,10 +171,10 @@ export default {
             throw new Error('Ocorreu um erro durante o login');
         }
     },
-    getUserInfo: async (token: string, sort?: 'asc' | 'desc', offset?: number, limit?: number, q?: string, cat?: string): Promise<GetUserInfoReturn> => {
+    getUserInfo: async ({ token, cat, limit, offset, q, signal, sort}: GetUserInfoParams): Promise<GetUserInfoReturn> => {
         try {
             const query = formatQueryFilters({ sort, offset, limit, q, cat, token });
-            const response = await fetch(BASE_URL + '/user/me' + query);
+            const response = await fetch(BASE_URL + '/user/me' + query, { signal });
 
             if (!response.ok) {
                 const errorData = await response.json();
@@ -129,6 +184,9 @@ export default {
             const responseData: GetUserInfoReturn = await response.json();
             return responseData;
         } catch (err) {
+            if (signal && signal.aborted) {
+                return { error: 'Request aborted, try again later' }
+            }
             console.error('Erro ao requerir informações: ', err);
             throw new Error('Erro ao requerir informações do usuário');
         }
