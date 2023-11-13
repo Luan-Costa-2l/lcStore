@@ -28,12 +28,20 @@ export const SignupForm = () => {
   
   const [loading, setLoading] = useState(false);
 
+  let controller: AbortController;
+
   useEffect(() => {
+    controller = new AbortController();
+    const signal = controller.signal;
     const fetchStates = async () => {
-      const res = await api.getStates();
+      const res = await api.getStates(signal);
       setStateList(res);
     }
     fetchStates();
+
+    return () => {
+      controller.abort();
+    }
   }, []);
 
   const SignUp = z.object({

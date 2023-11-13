@@ -16,13 +16,20 @@ const Profile = () => {
   const [openModal, setOpenModal] = useState(false);
   const [adId, setAdId] = useState('');
 
+  let controller: AbortController;
+
   useEffect(() => {
     const token = Cookies.get('token');
     if (!token) {
       redirect('/signin');
     }
+    controller = new AbortController();
+    const signal = controller.signal;
     const fetchUserInfo = async () => {
-      const [userData, states] = await Promise.all([api.getUserInfo(token), api.getStates()]);
+      const [userData, states] = await Promise.all([
+        api.getUserInfo({ token, signal }), 
+        api.getStates(signal)
+      ]);
       if ('error' in userData) {
         alert('Ocorreu um erro, tente novamente mais tarde.');
         return;
@@ -31,6 +38,10 @@ const Profile = () => {
       setStates(states);
     }
     fetchUserInfo();
+
+    return () => {
+      controller.abort();
+    }
   }, []);
 
   const handleOpenModal = (id: string) => {
