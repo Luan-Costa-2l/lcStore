@@ -44,7 +44,7 @@ const formatQueryFilters = ({ sort, offset, limit, q, cat, state, token }: Forma
     return '?' + filters.join('&');
 }
 
-export default {
+const api = {
     getCategories: async (signal?: AbortSignal) => {
         try {
             const response = await fetch(BASE_URL + '/categories', {signal});
@@ -282,3 +282,5 @@ export default {
         }
     }
 }
+
+export default api;
