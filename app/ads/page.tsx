@@ -6,6 +6,7 @@ import { AdType, Category, State } from '@/types';
 import { GetAdsParams } from '@/types/apiTypes';
 import Link from 'next/link';
 import { fixPrice } from '@/helpers/Formaters';
+import Image from 'next/image';
 
 const Ads = () => {
   const searchRef = useRef<HTMLInputElement>(null);
@@ -111,7 +112,7 @@ const Ads = () => {
           <div className="grid grid-cols-3 gap-5">
             {ads && ads.map((item) => (
               <Link key={item.id} href={`/ads/${item.id}`} className="bg-white p-3 rounded-lg hover:shadow-lg transition-shadow border-[1px] border-gray-300">
-                <img src={item.image} alt={item.title} className="rounded-t-lg border-[1px] border-gray-300" />
+                <Image src={item.image} width={288} height={288} alt={item.title} className="rounded-t-lg border-[1px] border-gray-300" />
                 <div>
                   <p className="py-1 truncate">{item.title}</p>
                   <div className="font-bold text-xl">{fixPrice(item.price)}</div>
