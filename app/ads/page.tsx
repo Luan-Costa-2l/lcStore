@@ -88,8 +88,8 @@ const Ads = () => {
   }
 
   return (
-    <section className="px-5 py-6 min-h-[calc(100vh-121px)]">
-      <div className="max-w-default mx-auto flex">
+    <section className="px-5 py-6 min-h-[calc(100vh-122px)]">
+      <div className="max-w-default mx-auto flex min-h-[calc(100vh-170px)]">
         <div className="max-w-[200px]">
           <input
             type="search"
@@ -130,17 +130,26 @@ const Ads = () => {
 
         <div className="flex-1 pl-5">
           <h2 className="font-bold text-2xl mb-5">Resultados:</h2>
-          <div className="grid grid-cols-3 gap-5">
-            {ads && ads.map((item) => (
-              <Link key={item.id} href={`/ads/${item.id}`} className="bg-white p-3 rounded-lg hover:shadow-lg transition-shadow border-[1px] border-gray-300">
-                <Image src={item.image} width={288} height={288} alt={item.title} className="rounded-t-lg border-[1px] border-gray-300" />
-                <div>
-                  <p className="py-1 truncate">{item.title}</p>
-                  <div className="font-bold text-xl">{fixPrice(item.price)}</div>
-                </div>
-              </Link>
-            ))}
-          </div>
+          {ads.length > 0 &&
+            <div className="grid grid-cols-3 gap-5">
+              {ads && ads.map((item) => (
+                <Link key={item.id} href={`/ads/${item.id}`} className="bg-white p-3 rounded-lg hover:shadow-lg transition-shadow border-[1px] border-gray-300">
+                  <Image src={item.image} width={288} height={288} alt={item.title} className="rounded-t-lg border-[1px] border-gray-300" />
+                  <div>
+                    <p className="py-1 truncate">{item.title}</p>
+                    <div className="font-bold text-xl">{fixPrice(item.price)}</div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          }
+
+          {ads.length === 0 &&
+            <div className='text-center mt-8'>
+              <p className='text-gray-700 text-xl'>Nenhum anúncio encontrado</p>
+              <span className='text-5xl'>🙈</span>
+            </div>
+          }
         </div>
       </div>
     </section>
