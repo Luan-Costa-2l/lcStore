@@ -3,10 +3,16 @@ import { Ad } from "@/components/Ad";
 import { Button } from "@/components/Button";
 import { Slider } from "@/components/Slider";
 import { fixPrice } from "@/helpers/Formaters";
+import Router from "next/router";
 
 const AdInfo = async ({ params }: { params: { id: string } }) => {
   const adData = await api.getAdInfo(params.id, true);
-  const sameCategory = await api.getAds({ cat: adData.category.slug });
+  const sameCategory = await api.getAds({ cat: adData?.category.slug });
+  if (!adData) {
+    alert("Erro ao carregar essa página, tente novamente mais tarde");
+    Router.back();
+    return;
+  }
 
   return (
     <main className="min-h-[calc(100vh-121px)] p-5 bg-gray-100">
