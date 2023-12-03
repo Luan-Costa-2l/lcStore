@@ -6,7 +6,7 @@ import api from "@/api";
 import { Category } from "@/types";
 import Field from "@/components/Field";
 import { CreateNewAdParams } from "@/types/apiTypes";
-import { useImageValidation } from "@/helpers/ValidatorHandler";
+import { imageValidation } from "@/helpers/ValidatorHandler";
 
 type ErrorFieldOptions = '' | 'title' | 'category' | 'price' | 'priceNegotiable' | 'description' | 'password' | 'images';
 
@@ -90,7 +90,7 @@ export const AddAdForm = () => {
       return;
     }
 
-    const { errorMessage, path } = useImageValidation(images);
+    const { errorMessage, path } = imageValidation(images);
     if (errorMessage) {
       setErrorField(path);
       setErrorMessage(errorMessage);

@@ -5,7 +5,7 @@ import { z } from "zod";
 import Field from "./Field";
 import api from "@/api";
 import { AdInfo, Category } from "@/types";
-import { useImageValidation } from "@/helpers/ValidatorHandler";
+import { imageValidation } from "@/helpers/ValidatorHandler";
 import { UpdateAdInfoParams } from "@/types/apiTypes";
 
 interface ProfileModalProps {
@@ -117,7 +117,7 @@ export const ProfileAdModal = ({ openModal, id }: ProfileModalProps) => {
     }
 
     if (images) {
-      const { errorMessage, path } = useImageValidation(images);
+      const { errorMessage, path } = imageValidation(images);
       if (errorMessage) {
         setErrorField(path);
         setErrorMessage(errorMessage);
