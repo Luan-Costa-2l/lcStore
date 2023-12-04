@@ -4,7 +4,7 @@ import Image from "next/image";
 import { ProfileForm } from "@/components/ProfileForm";
 import { ProfileAdList } from "@/components/ProfileAdList";
 import api from "@/api";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Cookies from "js-cookie";
 import { redirect } from "next/navigation";
 import { State, UserType } from "@/types";
@@ -16,15 +16,17 @@ const Profile = () => {
   const [openModal, setOpenModal] = useState(false);
   const [adId, setAdId] = useState('');
 
-  let controller: AbortController;
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     const token = Cookies.get('token');
     if (!token) {
       redirect('/signin');
     }
-    controller = new AbortController();
-    const signal = controller.signal;
+    abortControllerRef.current?.abort();
+    abortControllerRef.current = new AbortController();
+    const signal = abortControllerRef.current.signal;
+
     const fetchUserInfo = async () => {
       const [userData, states] = await Promise.all([
         api.getUserInfo({ token, signal }), 
@@ -40,7 +42,7 @@ const Profile = () => {
     fetchUserInfo();
 
     return () => {
-      controller.abort();
+      abortControllerRef.current?.abort();
     }
   }, []);
 

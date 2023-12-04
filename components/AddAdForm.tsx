@@ -26,18 +26,20 @@ export const AddAdForm = () => {
 
   const [loading, setLoading] = useState(false);
 
-  let controller: AbortController;
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
-    controller = new AbortController();
-    const signal = controller.signal;
+    abortControllerRef.current?.abort();
+    abortControllerRef.current = new AbortController();
+    const signal = abortControllerRef.current.signal;
+
     const fetchCategories = async () => {
       const response = await api.getCategories(signal);
       setCategoryList(response ? response : []);
     }
     fetchCategories();
     return () => {
-      controller.abort();
+      abortControllerRef.current?.abort();
     }
   }, []);
 
