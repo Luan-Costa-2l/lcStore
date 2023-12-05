@@ -57,7 +57,7 @@ export const ProfileAdModal = ({ openModal, id }: ProfileModalProps) => {
     return () => {
       abortControllerRef.current?.abort();
     }
-  }, []);
+  }, [id]);
 
   const AdInfo = z.object({
     title: z.string().nonempty('Este campo não pode estar vazio').min(3,'O titulo precisa ter pelo menos 3 caracteres'),
