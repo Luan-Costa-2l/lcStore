@@ -6,7 +6,17 @@ import { fixPrice } from "@/helpers/Formaters";
 
 const AdInfo = async ({ params }: { params: { id: string } }) => {
   const adData = await api.getAdInfo(params.id, true);
-  const sameCategory = await api.getAds({ cat: adData.category.slug });
+  const sameCategory = await api.getAds({ cat: adData?.category.slug });
+
+  if (!adData) {
+    return (
+      <main className="min-h-[calc(100vh-121px)] p-5 bg-gray-100">
+        <section className="max-w-default mx-auto flex mb-10">
+          <h1>Anúncio não encontrado, tente novamente mais tarde.</h1>
+        </section>
+      </main>
+    )
+  }
 
   return (
     <main className="min-h-[calc(100vh-121px)] p-5 bg-gray-100">

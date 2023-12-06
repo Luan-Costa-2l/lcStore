@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation';
-import { useState, useEffect, FormEventHandler } from "react";
+import { useState, useEffect, FormEventHandler, useRef } from "react";
 import { z } from "zod";
 import api from "@/api";
 import { State } from "@/types";
@@ -28,11 +28,13 @@ export const SignupForm = () => {
   
   const [loading, setLoading] = useState(false);
 
-  let controller: AbortController;
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
-    controller = new AbortController();
-    const signal = controller.signal;
+    abortControllerRef.current?.abort();
+    abortControllerRef.current = new AbortController();
+    const signal = abortControllerRef.current.signal;
+
     const fetchStates = async () => {
       const res = await api.getStates(signal);
       setStateList(res);
@@ -40,7 +42,7 @@ export const SignupForm = () => {
     fetchStates();
 
     return () => {
-      controller.abort();
+      abortControllerRef.current?.abort();
     }
   }, []);
 

@@ -21,12 +21,14 @@ const Ads = () => {
   const [ads, setAds] = useState<AdType[]>([]);
   const [adsTotal, setAdsTotal] = useState(0);
   
-  let controller: AbortController;
-  let adsController: AbortController;
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const adsAbortControllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
-    controller =  new AbortController();
-    const signal = controller.signal;
+    abortControllerRef.current?.abort();
+    abortControllerRef.current = new AbortController();
+    const signal = abortControllerRef.current.signal;
+
     const fetchData = async () => {
       const [states, categories] = await Promise.all([api.getStates(signal), api.getCategories(signal)]);
       setStateList(states);
@@ -35,14 +37,14 @@ const Ads = () => {
     fetchData();
 
     return () => {
-      controller.abort();
+      abortControllerRef.current?.abort();
     }
   }, []);
 
   useEffect(() => {
-    adsController?.abort();
-    adsController = new AbortController();
-    const signal = adsController.signal;
+    adsAbortControllerRef.current?.abort();
+    adsAbortControllerRef.current = new AbortController();
+    const signal = adsAbortControllerRef.current.signal;
 
     const fetchAdsData = async () => {
       const filters = setFilters({ q: search, state, cat: category?.slug, limit: 9 });
@@ -53,7 +55,7 @@ const Ads = () => {
     fetchAdsData();
 
     return () => {
-      adsController.abort();
+      adsAbortControllerRef.current?.abort();
     }
   }, [state, category, search]);
 

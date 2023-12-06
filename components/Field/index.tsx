@@ -6,7 +6,7 @@ import { FieldButton } from "./FieldButton";
 import { FieldErrorMsg } from "./FieldErrorMsg";
 import { FieldIFile } from "./FieldIFile";
 
-export default {
+const Field =  {
   FieldRoot: FieldRoot,
   Label: FieldLabel,
   Input: FieldInput,
@@ -15,3 +15,5 @@ export default {
   Button: FieldButton,
   ErrorMessage: FieldErrorMsg
 }
+
+export default Field;

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { AdType } from "@/types";
 import Link from "next/link";
 import { fixPrice } from "@/helpers/Formaters";
+import Image from "next/image";
 
 interface ProfileAdListProps {
   adList: AdType[];
@@ -54,7 +55,7 @@ export const ProfileAdList = ({ adList, openModal }: ProfileAdListProps) => {
             </div>
 
             {/* adinfo */}
-            <img src={item.image} alt={item.title} className="rounded-t-lg border-[1px] border-gray-300" />
+            <Image src={item.image} alt={item.title} width={245} height={245} className="rounded-t-lg border-[1px] border-gray-300" />
             <div>
               <p className="py-1 truncate">{item.title}</p>
               <div className="font-bold text-xl">{fixPrice(item.price)}</div>

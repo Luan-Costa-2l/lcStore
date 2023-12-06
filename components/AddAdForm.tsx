@@ -1,12 +1,12 @@
 'use client'
 
-import { useState, FormEventHandler, useEffect, ChangeEvent } from "react";
+import { useState, FormEventHandler, useEffect, ChangeEvent, useRef } from "react";
 import { z } from "zod";
 import api from "@/api";
 import { Category } from "@/types";
 import Field from "@/components/Field";
 import { CreateNewAdParams } from "@/types/apiTypes";
-import { useImageValidation } from "@/helpers/ValidatorHandler";
+import { imageValidation } from "@/helpers/ValidatorHandler";
 
 type ErrorFieldOptions = '' | 'title' | 'category' | 'price' | 'priceNegotiable' | 'description' | 'password' | 'images';
 
@@ -26,18 +26,20 @@ export const AddAdForm = () => {
 
   const [loading, setLoading] = useState(false);
 
-  let controller: AbortController;
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
-    controller = new AbortController();
-    const signal = controller.signal;
+    abortControllerRef.current?.abort();
+    abortControllerRef.current = new AbortController();
+    const signal = abortControllerRef.current.signal;
+
     const fetchCategories = async () => {
       const response = await api.getCategories(signal);
       setCategoryList(response ? response : []);
     }
     fetchCategories();
     return () => {
-      controller.abort();
+      abortControllerRef.current?.abort();
     }
   }, []);
 
@@ -90,7 +92,7 @@ export const AddAdForm = () => {
       return;
     }
 
-    const { errorMessage, path } = useImageValidation(images);
+    const { errorMessage, path } = imageValidation(images);
     if (errorMessage) {
       setErrorField(path);
       setErrorMessage(errorMessage);

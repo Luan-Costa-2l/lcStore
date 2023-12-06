@@ -216,25 +216,15 @@ const api = {
         try {
             const token = Cookies.get('token') || '';
             const formData = new FormData();
-            formData.append('token', token)
-            if (title) {
-                formData.append('title', title);
-            }
-            if (category) {
-                formData.append('category', category);
-            }
-            if (price) {
-                formData.append('price', price.toString());
-            }
-            if (priceNegotiable) {
-                formData.append('priceNegotiable', priceNegotiable.toString());
-            }
-            if (description) {
-                formData.append('description', description);
-            }
-            if (img) {
-                img.forEach(file => formData.append('img', file));
-            }
+            formData.append('token', token);
+            
+            if (title) formData.append('title', title);
+            if (category) formData.append('category', category);
+            if (price) formData.append('price', price.toString());
+            if (priceNegotiable) formData.append('priceNegotiable', priceNegotiable.toString());
+            if (description) formData.append('description', description);
+            if (img) img.forEach(file => formData.append('img', file));
+
             const response = await fetch(BASE_URL + `/ad/${id}`, {
                 method: 'POST',
                 body: formData

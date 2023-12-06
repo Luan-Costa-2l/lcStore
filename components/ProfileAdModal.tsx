@@ -1,11 +1,11 @@
 'use client'
 
-import { FormEventHandler, ChangeEvent, useState, useEffect } from "react"
+import { FormEventHandler, ChangeEvent, useState, useEffect, useRef } from "react"
 import { z } from "zod";
 import Field from "./Field";
 import api from "@/api";
 import { AdInfo, Category } from "@/types";
-import { useImageValidation } from "@/helpers/ValidatorHandler";
+import { imageValidation } from "@/helpers/ValidatorHandler";
 import { UpdateAdInfoParams } from "@/types/apiTypes";
 
 interface ProfileModalProps {
@@ -33,11 +33,12 @@ export const ProfileAdModal = ({ openModal, id }: ProfileModalProps) => {
 
   const [loading, setLoading] = useState(false);
   
-  let controller: AbortController;
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
-    controller = new AbortController();
-    const signal = controller.signal;
+    abortControllerRef.current?.abort();
+    abortControllerRef.current = new AbortController();
+    const signal = abortControllerRef.current.signal;
     const fethData = async () => {
       const [adInfo, categories] = await Promise.all([api.getAdInfo(id, false, signal), api.getCategories(signal)]);
       setCategoryList(categories);
@@ -54,9 +55,9 @@ export const ProfileAdModal = ({ openModal, id }: ProfileModalProps) => {
     fethData();
 
     return () => {
-      controller.abort();
+      abortControllerRef.current?.abort();
     }
-  }, []);
+  }, [id]);
 
   const AdInfo = z.object({
     title: z.string().nonempty('Este campo não pode estar vazio').min(3,'O titulo precisa ter pelo menos 3 caracteres'),
@@ -117,7 +118,7 @@ export const ProfileAdModal = ({ openModal, id }: ProfileModalProps) => {
     }
 
     if (images) {
-      const { errorMessage, path } = useImageValidation(images);
+      const { errorMessage, path } = imageValidation(images);
       if (errorMessage) {
         setErrorField(path);
         setErrorMessage(errorMessage);
